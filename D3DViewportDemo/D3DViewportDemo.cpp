@@ -10,18 +10,15 @@
 
 #include <math.h> // sin, cos for rotation
 
-#include "data.h" // example 3d model (the 'data.h' source file is provided below, along with 'shaders.hlsl')
+#include "data.h" // vertex and index data
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define TITLE "Minimal D3D11 by d7samurai"
+#define TITLE "D3D viewport demo for validation"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct float3 { float x, y, z; };
-struct matrix { float m[4][4]; };
-
-matrix operator*(const matrix& m1, const matrix& m2);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -135,11 +132,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &vertexShader);
 
-    D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 normal, float2 texcoord, float3 color
+    D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 color
     {
         { "POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEX", 0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
@@ -169,19 +164,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_SAMPLER_DESC samplerDesc = {};
-    samplerDesc.Filter         = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    samplerDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-
-    ID3D11SamplerState* samplerState;
-
-    device->CreateSamplerState(&samplerDesc, &samplerState);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
     depthStencilDesc.DepthEnable    = TRUE;
     depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -190,25 +172,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ID3D11DepthStencilState* depthStencilState;
 
     device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    struct Constants
-    {
-        matrix Transform;
-        matrix Projection;
-        float3 LightVector;
-    };
-
-    D3D11_BUFFER_DESC constantBufferDesc = {};
-    constantBufferDesc.ByteWidth      = sizeof(Constants) + 0xf & 0xfffffff0;
-    constantBufferDesc.Usage          = D3D11_USAGE_DYNAMIC;
-    constantBufferDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-    constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-    ID3D11Buffer* constantBuffer;
-
-    device->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,38 +201,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_TEXTURE2D_DESC textureDesc = {};
-    textureDesc.Width              = TEXTURE_WIDTH;  // in data.h
-    textureDesc.Height             = TEXTURE_HEIGHT; // in data.h
-    textureDesc.MipLevels          = 1;
-    textureDesc.ArraySize          = 1;
-    textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    textureDesc.SampleDesc.Count   = 1;
-    textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
-    textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA textureData = {};
-    textureData.pSysMem            = TextureData;
-    textureData.SysMemPitch        = TEXTURE_WIDTH * 4; // 4 bytes per pixel
-
-    ID3D11Texture2D* texture;
-
-    device->CreateTexture2D(&textureDesc, &textureData, &texture);
-
-    ID3D11ShaderResourceView* textureView;
-
-    device->CreateShaderResourceView(texture, nullptr, &textureView);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     float w = static_cast<float>(depthBufferDesc.Width);  // width
     float h = static_cast<float>(depthBufferDesc.Height); // height
-    float n = 1000.0f;                                    // near
-    float f = 1000000.0f;                                 // far
-
-    float3 modelRotation    = { 0.0f, 0.0f, 0.0f };
-    float3 modelScale       = { 400.0f, 400.0f, 400.0f };
-    float3 modelTranslation = { 0.0f, 0.0f, 1500.0f };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -285,35 +218,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        matrix rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
-        matrix rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
-        matrix rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-        matrix scale     = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
-        matrix translate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
-
-        modelRotation.x += 0.005f;
-        modelRotation.y += 0.009f;
-        modelRotation.z += 0.001f;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-        D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-
-        deviceContext->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-
-        Constants* constants = reinterpret_cast<Constants*>(mappedSubresource.pData);
-
-        constants->Transform   = rotateX * rotateY * rotateZ * scale * translate;
-        constants->Projection  = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
-        constants->LightVector = { 1.0f, -1.0f, 1.0f };
-
-        deviceContext->Unmap(constantBuffer, 0);
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
 
         FLOAT backgroundColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f};
 
-        UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
+        UINT stride = 6 * 4; // vertex size (6 floats: float3 position, float3 color)
         UINT offset = 0;
 
         D3D11_VIEWPORT viewport = { 0.0f, 0.0f, w, h, 0.0f, 1.0f };
@@ -329,14 +237,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
         deviceContext->VSSetShader(vertexShader, nullptr, 0);
-        deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
         deviceContext->PSSetShader(pixelShader, nullptr, 0);
-        deviceContext->PSSetShaderResources(0, 1, &textureView);
-        deviceContext->PSSetSamplers(0, 1, &samplerState);
 
         deviceContext->OMSetRenderTargets(1, &frameBufferView, depthBufferView);
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
@@ -350,29 +255,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         swapChain->Present(1, 0);
     }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-matrix operator*(const matrix& m1, const matrix& m2)
-{
-    return
-    {
-        m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] + m1.m[0][3] * m2.m[3][0],
-        m1.m[0][0] * m2.m[0][1] + m1.m[0][1] * m2.m[1][1] + m1.m[0][2] * m2.m[2][1] + m1.m[0][3] * m2.m[3][1],
-        m1.m[0][0] * m2.m[0][2] + m1.m[0][1] * m2.m[1][2] + m1.m[0][2] * m2.m[2][2] + m1.m[0][3] * m2.m[3][2],
-        m1.m[0][0] * m2.m[0][3] + m1.m[0][1] * m2.m[1][3] + m1.m[0][2] * m2.m[2][3] + m1.m[0][3] * m2.m[3][3],
-        m1.m[1][0] * m2.m[0][0] + m1.m[1][1] * m2.m[1][0] + m1.m[1][2] * m2.m[2][0] + m1.m[1][3] * m2.m[3][0],
-        m1.m[1][0] * m2.m[0][1] + m1.m[1][1] * m2.m[1][1] + m1.m[1][2] * m2.m[2][1] + m1.m[1][3] * m2.m[3][1],
-        m1.m[1][0] * m2.m[0][2] + m1.m[1][1] * m2.m[1][2] + m1.m[1][2] * m2.m[2][2] + m1.m[1][3] * m2.m[3][2],
-        m1.m[1][0] * m2.m[0][3] + m1.m[1][1] * m2.m[1][3] + m1.m[1][2] * m2.m[2][3] + m1.m[1][3] * m2.m[3][3],
-        m1.m[2][0] * m2.m[0][0] + m1.m[2][1] * m2.m[1][0] + m1.m[2][2] * m2.m[2][0] + m1.m[2][3] * m2.m[3][0],
-        m1.m[2][0] * m2.m[0][1] + m1.m[2][1] * m2.m[1][1] + m1.m[2][2] * m2.m[2][1] + m1.m[2][3] * m2.m[3][1],
-        m1.m[2][0] * m2.m[0][2] + m1.m[2][1] * m2.m[1][2] + m1.m[2][2] * m2.m[2][2] + m1.m[2][3] * m2.m[3][2],
-        m1.m[2][0] * m2.m[0][3] + m1.m[2][1] * m2.m[1][3] + m1.m[2][2] * m2.m[2][3] + m1.m[2][3] * m2.m[3][3],
-        m1.m[3][0] * m2.m[0][0] + m1.m[3][1] * m2.m[1][0] + m1.m[3][2] * m2.m[2][0] + m1.m[3][3] * m2.m[3][0],
-        m1.m[3][0] * m2.m[0][1] + m1.m[3][1] * m2.m[1][1] + m1.m[3][2] * m2.m[2][1] + m1.m[3][3] * m2.m[3][1],
-        m1.m[3][0] * m2.m[0][2] + m1.m[3][1] * m2.m[1][2] + m1.m[3][2] * m2.m[2][2] + m1.m[3][3] * m2.m[3][2],
-        m1.m[3][0] * m2.m[0][3] + m1.m[3][1] * m2.m[1][3] + m1.m[3][2] * m2.m[2][3] + m1.m[3][3] * m2.m[3][3],
-    };
 }
