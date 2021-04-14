@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
+#include "../data.h"
 #pragma comment (lib, "opengl32.lib")
 
 //Global
@@ -17,6 +18,7 @@ GLuint vShader = 0;
 GLuint pShader = 0;
 GLuint program = 0;
 GLint attributePos = 0;
+GLint attributeColor = 0;
 GLint uniformViewport = 0;
 GLenum err = GL_NO_ERROR;
 
@@ -192,14 +194,15 @@ BOOL InitOpenGL()
 	GLint compiled;
 	//Vertex shader
 	const char* vShaderStr = R"(
+#version 150
 uniform vec2 Viewport;
 in vec4 vPosition;
+in vec4 vColor;
+out vec4 pColor;
 void main()
 {
-	gl_Position = vec4(
-					2.0*vPosition.x/Viewport.x - 1.0,
-					2.0*vPosition.y/Viewport.y - 1.0,
-					0.0, 1.0);
+	gl_Position = vec4(vPosition.xy, 0.0, 1.0);
+	pColor = vColor;
 }
 )";
 	vShader = glCreateShader(GL_VERTEX_SHADER);
@@ -230,9 +233,11 @@ void main()
 
 	//Fragment shader
 	const char* pShaderStr = R"(
+#version 150
+in vec4 pColor;
 void main()
 {
-gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	gl_FragColor = pColor;
 }
 )";
 	pShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -273,7 +278,7 @@ gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	glAttachShader(program, pShader);
 	glLinkProgram(program);
 	attributePos = glGetAttribLocation(program, "vPosition");//get location of attribute <vPosition>
-	uniformViewport = glGetUniformLocation(program, "Viewport");//get location of uniform <Viewport>
+	attributeColor = glGetAttribLocation(program, "vColor");//get location of attribute <vColor>
 	glGetProgramiv(program, GL_LINK_STATUS, &linked);
 	if (!linked)
 	{
@@ -295,23 +300,15 @@ gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
 	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 
-	GLfloat vertex[] =
-	{
-		100.0f, 100.0f, 0.0f,
-		100.0f, 300.0f, 0.0f,
-		400.0f, 300.0f, 0.0f,
-		400.0f, 100.0f, 0.0f,
-	};
 	glGenBuffers(1, &vertexBuf);
 	assert(vertexBuf != 0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), (GLvoid*)vertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), (GLvoid*)VertexData, GL_STATIC_DRAW);
 
-	GLushort index[] = { 0, 1, 2, 2, 3, 0 };
 	glGenBuffers(1, &indexBuf);
 	assert(indexBuf != 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), (GLvoid*)index, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexData), (GLvoid*)IndexData, GL_STATIC_DRAW);
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
@@ -360,19 +357,18 @@ void Render(HWND hWnd)
 
 	//Clear
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	//Set Uniform "Viewport"
-	glUniform2f(uniformViewport, GLfloat(clientRect.right - clientRect.left), GLfloat(clientRect.bottom - clientRect.top));
-
+	
 	// Bind the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
 
-	glVertexAttribPointer(attributePos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(attributePos, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+	glVertexAttribPointer(attributeColor, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (void*)(3*sizeof(GLfloat)));
 	glEnableVertexAttribArray(attributePos);
+	glEnableVertexAttribArray(attributeColor);
 
 	//Draw two trangles
-	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 	err = glGetError();
 
 	SwapBuffers(hDC);

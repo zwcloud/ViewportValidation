@@ -10,7 +10,7 @@
 
 #include <math.h> // sin, cos for rotation
 
-#include "data.h" // vertex and index data
+#include "../data.h" // vertex and index data
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
