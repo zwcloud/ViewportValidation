@@ -298,7 +298,7 @@ void main()
 	}
 	glUseProgram(program);
 
-	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+	glClearColor(0, 0, 0, 1.0f);
 
 	glGenBuffers(1, &vertexBuf);
 	assert(vertexBuf != 0);
@@ -353,12 +353,7 @@ BOOL Update(HWND hWnd)
 void Render(HWND hWnd)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	_CheckGLError_
-
-	//Clear
-	glClear(GL_COLOR_BUFFER_BIT);
 	
-	// Bind the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
 
@@ -367,7 +362,6 @@ void Render(HWND hWnd)
 	glEnableVertexAttribArray(attributePos);
 	glEnableVertexAttribArray(attributeColor);
 
-	//Draw two trangles
 	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 	err = glGetError();
 

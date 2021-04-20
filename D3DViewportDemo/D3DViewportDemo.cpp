@@ -139,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 color
     {
-        { "POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
@@ -184,7 +184,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     vertexBufferDesc.ByteWidth = sizeof(VertexData);
     vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
     vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
+	
     D3D11_SUBRESOURCE_DATA vertexData = { VertexData };
 
     ID3D11Buffer* vertexBuffer;
@@ -224,7 +224,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-        FLOAT backgroundColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f};
+        FLOAT backgroundColor[4] = { 0, 0, 0, 1.0f};
 
         UINT stride = 6 * 4; // vertex size (6 floats: float3 position, float3 color)
         UINT offset = 0;
