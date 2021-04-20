@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RegisterClassExA(&wndClassEx);
 
-    HWND window = CreateWindowExA(0, TITLE, TITLE, WS_POPUP | WS_MAXIMIZE | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, nullptr, nullptr);
+    HWND window = CreateWindowExA(0, TITLE, TITLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 640, 480, 0, 0, hInstance, 0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,9 +67,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+	RECT clientRect;
+    GetClientRect(window, &clientRect);
+	int64_t clientWidth = clientRect.right - clientRect.left;
+	int64_t clientHeight = clientRect.bottom - clientRect.top;
+	
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
-    swapChainDesc.Width              = 0; // use window width
-    swapChainDesc.Height             = 0; // use window height
+    swapChainDesc.Width              = (UINT)clientWidth; // use window width
+    swapChainDesc.Height             = (UINT)clientHeight; // use window height
     swapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
     swapChainDesc.Stereo             = FALSE;
     swapChainDesc.SampleDesc.Count   = 1;
