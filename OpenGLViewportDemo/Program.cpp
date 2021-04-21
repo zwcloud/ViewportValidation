@@ -362,7 +362,7 @@ void Render(HWND hWnd)
 	glEnableVertexAttribArray(attributePos);
 	glEnableVertexAttribArray(attributeColor);
 
-	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, sizeof(IndexData) / sizeof(float), GL_UNSIGNED_INT, 0);
 	err = glGetError();
 
 	SwapBuffers(hDC);
