@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
     swapChainDesc.Width              = (UINT)clientWidth; // use window width
     swapChainDesc.Height             = (UINT)clientHeight; // use window height
-    swapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+    swapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM;
     swapChainDesc.Stereo             = FALSE;
     swapChainDesc.SampleDesc.Count   = 1;
     swapChainDesc.SampleDesc.Quality = 0;
