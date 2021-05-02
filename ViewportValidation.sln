@@ -12,23 +12,69 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{891438
 		data.h = data.h
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESViewportDemo", "OpenGLESViewportDemo", "{75D89DCB-7F5F-48E0-BFDC-6B13C7DE1FBB}"
+EndProject
+Project("{39E2626F-3545-4960-A6E8-258AD8476CE5}") = "OpenGLESViewportDemo", "OpenGLESViewportDemo\OpenGLESViewportDemo\OpenGLESViewportDemo.androidproj", "{2AF17D42-E6C2-45DF-B764-D22519B936F4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLESViewportDemo.NativeActivity", "OpenGLESViewportDemo\OpenGLESViewportDemo.NativeActivity\OpenGLESViewportDemo.NativeActivity.vcxproj", "{D153CBC5-E072-49EC-BC42-2EF344F17397}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Debug|ARM.ActiveCfg = Debug|x64
 		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Debug|x64.ActiveCfg = Debug|x64
 		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Debug|x64.Build.0 = Debug|x64
+		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Debug|x86.ActiveCfg = Debug|x64
+		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Release|ARM.ActiveCfg = Release|x64
 		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Release|x64.ActiveCfg = Release|x64
 		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Release|x64.Build.0 = Release|x64
+		{88432AD0-2E4A-4996-8D87-E1D808080EC3}.Release|x86.ActiveCfg = Release|x64
+		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Debug|ARM.ActiveCfg = Debug|x64
 		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Debug|x64.ActiveCfg = Debug|x64
 		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Debug|x64.Build.0 = Debug|x64
+		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Debug|x86.ActiveCfg = Debug|x64
+		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Release|ARM.ActiveCfg = Release|x64
 		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Release|x64.ActiveCfg = Release|x64
 		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Release|x64.Build.0 = Release|x64
+		{426D54B9-85C2-409D-918D-32F79CA9FAB6}.Release|x86.ActiveCfg = Release|x64
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|ARM.Build.0 = Debug|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|ARM.Deploy.0 = Debug|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|x64.ActiveCfg = Debug|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|x86.ActiveCfg = Debug|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|x86.Build.0 = Debug|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Debug|x86.Deploy.0 = Debug|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|ARM.ActiveCfg = Release|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|ARM.Build.0 = Release|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|ARM.Deploy.0 = Release|ARM
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|x64.ActiveCfg = Release|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|x86.ActiveCfg = Release|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|x86.Build.0 = Release|x86
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4}.Release|x86.Deploy.0 = Release|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Debug|ARM.ActiveCfg = Debug|ARM
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Debug|ARM.Build.0 = Debug|ARM
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Debug|x64.ActiveCfg = Debug|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Debug|x86.ActiveCfg = Debug|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Debug|x86.Build.0 = Debug|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Release|ARM.ActiveCfg = Release|ARM
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Release|ARM.Build.0 = Release|ARM
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Release|x64.ActiveCfg = Release|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Release|x86.ActiveCfg = Release|x86
+		{D153CBC5-E072-49EC-BC42-2EF344F17397}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2AF17D42-E6C2-45DF-B764-D22519B936F4} = {75D89DCB-7F5F-48E0-BFDC-6B13C7DE1FBB}
+		{D153CBC5-E072-49EC-BC42-2EF344F17397} = {75D89DCB-7F5F-48E0-BFDC-6B13C7DE1FBB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9E0A313-AD5A-4C97-85CE-B333F89BED60}
